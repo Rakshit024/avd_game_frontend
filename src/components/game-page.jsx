@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Loader2 } from "lucide-react";
+import {  Loader2 } from "lucide-react";
 import axios from "axios";
 import { backendUrl } from "@/config/envFile";
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import Link from "next/link";
 
 const groupOptions = [
   "Param",
@@ -98,18 +99,16 @@ const GamePage = ({ id }) => {
 
       console.log(res);
 
-      
-
       if (res.status === 200) {
-        if(res.data.errorStatus === true){
-          toast.error("Both IDs are in the same Sutra ")
+        if (res.data.errorStatus === true) {
+          toast.error("Both IDs are in the same Sutra ");
         }
         if (res.data.data.status === "PAIRED") {
           toast.success("Successfully Paired");
           setBlockNo(res.data.data.updated.sutraA.blockNo);
         }
         if (res.data.data.status == "ALREADY_PAIRED") {
-          setBlockNo(res.data.data.blockNo)
+          setBlockNo(res.data.data.blockNo);
           toast.success(res.data.data.msg);
         }
       }
@@ -224,6 +223,11 @@ const GamePage = ({ id }) => {
               <CardContent>
                 <div className="flex flex-col gap-2">
                   Your Fliped Block Number is : {blockNo}
+                  <Link href={'/camera'}>
+                  <Button className={'w-full'} variant={'secondary'}>
+                    Take Smruti
+                  </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

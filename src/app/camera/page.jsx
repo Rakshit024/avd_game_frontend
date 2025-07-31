@@ -1,28 +1,38 @@
 "use client";
-import React, { useCallback, useRef, useState, useEffect } from "react";
-import Webcam from "react-webcam";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-const videoConstraints = {
-  width: 640,
-  height: 480,
-  facingMode: "user",
-};
-
 const Page = () => {
-  const webcamRef = useRef(null);
   const canvasRef = useRef(null);
-  const [captured, setCaptured] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);
   const [finalImageUrl, setFinalImageUrl] = useState(null);
+  const [sutra, setSutra] = useState(null);
 
-  const capture = useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setCaptured(imageSrc);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const data = JSON.parse(localStorage.getItem("sutra"));
+      if (data?.sutraData) {
+        setSutra(data.sutraData);
+      }
+    }
   }, []);
 
-  // Draw onto canvas when captured and base image loaded
+  const completSutra = sutra ? `${sutra.s1} ${sutra.s2}` : "";
+  // const imageFileName = completSutra.replace(/\s+/g, "");
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
-    if (!captured) return;
+    if (!uploadedImage || !completSutra) return;
 
     const drawImage = async () => {
       const canvas = canvasRef.current;
@@ -31,47 +41,48 @@ const Page = () => {
       const background = new Image();
       const selfie = new Image();
 
-      background.src = "/frame.jpeg"; // from public folder
-      selfie.src = captured;
+      background.src = `/stura_frame_images/${completSutra}.png`;
+      selfie.src = uploadedImage;
 
       background.onload = () => {
-        canvas.width = 600;
+        canvas.width = 500;
         canvas.height = 900;
 
-        // Draw base image
-        ctx.drawImage(background, 0, 0, 600, 900);
+        // Draw background frame
+        ctx.drawImage(background, 0, 0, 500, 900);
 
-        // Draw captured selfie into frame region
-        ctx.drawImage(selfie, 70, 390, 460, 310);
+        // Draw uploaded photo — center crop
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(45, 463, 390, 250); // Clip to frame bounds
+        ctx.clip();
 
-        // Convert canvas to downloadable image URL
+        ctx.drawImage(selfie, 45, 463, 390, 250); // Fit inside area
+        ctx.restore();
+
+        // Generate output image
         const finalUrl = canvas.toDataURL("image/png");
         setFinalImageUrl(finalUrl);
       };
     };
 
     drawImage();
-  }, [captured]);
+  }, [uploadedImage, completSutra]);
 
   return (
     <div className="flex flex-col items-center p-6">
-      {/* Webcam preview */}
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat="image/png"
-        videoConstraints={videoConstraints}
-        className="rounded shadow w-full max-w-md"
+      {/* Upload input */}
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        className="mb-4"
       />
 
-      <Button className="my-4 w-full max-w-md" onClick={capture}>
-        Capture Selfie
-      </Button>
-
-      {/* Canvas (invisible) */}
+      {/* Canvas for compositing */}
       <canvas ref={canvasRef} style={{ display: "none" }} />
 
-      {/* Final image preview */}
+      {/* Preview and Download */}
       {finalImageUrl && (
         <div className="flex flex-col items-center gap-4 mt-6">
           <img
@@ -79,8 +90,8 @@ const Page = () => {
             alt="Final ID"
             className="w-[300px] border rounded shadow"
           />
-          <a href={finalImageUrl} download="frame.jpeg">
-            <Button variant="secondary">Download ID Card</Button>
+          <a href={finalImageUrl} download="ID_Card.png">
+            <Button variant="secondary">Download Smruti</Button>
           </a>
         </div>
       )}
