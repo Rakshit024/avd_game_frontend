@@ -94,23 +94,7 @@ const page = () => {
         </button>
       </div>
 
-      {/* Success confetti effect */}
-      {isClicked && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className={`absolute w-2 h-2 bg-gradient-to-r from-yellow-400 to-red-500 rounded-full animate-bounce`}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${1 + Math.random() * 2}s`,
-              }}
-            ></div>
-          ))}
-        </div>
-      )}
+   
     </div>
   );
 };
