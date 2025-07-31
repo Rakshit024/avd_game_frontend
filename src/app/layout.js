@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { FlipCardProvider } from "@/context/FlipCardContext";
-
+import SocketProvider from "@/context/SocketContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,7 +23,9 @@ export default function RootLayout({ children }) {
       >
         <Toaster position="bottom-center" reverseOrder={false} />
         <div className="px-3 py-2">
-          <FlipCardProvider>{children} </FlipCardProvider>
+          <SocketProvider>
+            <FlipCardProvider>{children}</FlipCardProvider>
+          </SocketProvider>
         </div>
       </body>
     </html>

@@ -1,12 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useFlipContext } from "@/context/FlipCardContext";
+import { backendUrl } from "@/config/envFile";
+import axios from "axios";
 import React from "react";
 
 const page = () => {
-  const { flipFromCenter } = useFlipContext();
+  const flipAll = async () => {
+    const res = await axios.patch(`${backendUrl}/sutra/staticAll`);
+    console.log(res.data);
+  };
 
-  return <Button onClick={flipFromCenter}>Flip From Anywhere</Button>;
+  return <Button onClick={flipAll}>Flip From Anywhere</Button>;
 };
 
 export default page;

@@ -5,12 +5,12 @@ import { Button } from "./ui/button";
 import { useFlipContext } from "@/context/FlipCardContext";
 
 const FlipCard = () => {
-  const { cards } = useFlipContext();
+  const { cards, flipFromCenter, flipSkippedBlocksSequentially } =
+    useFlipContext();
 
   return (
     <>
- 
-      <div className="grid grid-cols-25 grid-rows-20 w-full h-[112.5vh] ">
+      <div className="grid grid-cols-25 grid-rows-20 w-full h-[112.9vh] ">
         {cards.map((card) => (
           <FlipCardCmp key={card.id} number={card.id} flipped={card.flipped} />
         ))}

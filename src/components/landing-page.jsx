@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -11,29 +11,54 @@ import {
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import axios from "axios";
 import { backendUrl } from "@/config/envFile";
 import { toast } from "react-hot-toast";
 
+// Param
+// Pavitra
+// Pulkit
+// Paramanand
+// Samp
+// Atmiya
+// Suhradbhav
+// Bhulku
+// Saradta
+// Dasatva
+// Swikar
+// Ekta
+// Sahaj
+// Seva Nadiad
+// Smruti Nadiad
+// Suhradbhav Nadiad
+// Swadharma Nadiad
+// Bhakti Zone
+// Parabhakti Zone
+// Anuvrutti Zone
+// Mehemdavad
 const groupOptions = [
   "Param",
-  "Pulkit",
   "Pavitra",
-  "Parmanand",
-  "Samp Atmiya",
-  "Suhradbhav Bhoolku",
-  "Saradata Dastva",
-  "Swikar Ekta",
-  "Sahaj (V. V. Nagar, Karamsad, Mogari)",
-  "Seva (Nadiad - city)",
-  "Smruti (Nadiad - city)",
-  "Suhradbhav (Nadiad - city)",
-  "Swadharm (Nadiad - city)",
-  "Bhakti(Nadiyad Gramya)",
-  "Parabhakti(Nadiyad Gramya)",
-  "Anuvruti(Nadiyad Gramya)",
-  "Mahemdavad",
+  "Pulkit",
+  "Paramanand",
+  "Samp",
+  "Atmiya",
+  "Suhradbhav",
+  "Bhulku",
+  "Saradta",
+  "Dasatva",
+  "Swikar",
+  "Ekta",
+  "Sahaj",
+  "Seva Nadiad",
+  "Smruti Nadiad",
+  "Suhradbhav Nadiad",
+  "Swadharma Nadiad",
+  "Bhakti Zone",
+  "Parabhakti Zone",
+  "Anuvrutti Zone",
+  "Mehemdavad",
 ];
 
 const LandingPage = () => {
@@ -43,14 +68,17 @@ const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  function wait(ms) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(`Resolved after ${ms} milliseconds`);
-      }, ms);
-    });
-  }
-  // /game/diary-entry/
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("sutra"));
+
+    if (!data || !data.sutraData) {
+      return;
+    }
+
+    if (data || data.sutraData) {
+      redirect(`/game/${data.fieldValue}`);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,13 +89,13 @@ const LandingPage = () => {
     setError("");
     try {
       setIsLoading(true);
-      // http://192.168.201.155:8000/game/diary-entry
 
       const response = await axios.post(
-        `${backendUrl}/game/diary-entry`,
+        `${backendUrl}/sutra/register
+`,
         {
-          diary_number: id,
-          group_name: group,
+          id: id,
+          groupName: group,
         },
         {
           headers: {
@@ -76,22 +104,21 @@ const LandingPage = () => {
         }
       );
 
-      if (response.status === 201) {
-        if (response.data) {
-          router.replace(`/game/${response.data.diary_number}`);
-        }
-      }
-
       if (response.status === 200) {
-        if (response.data) {
-          router.replace(`/game/${response.data.diary_number}`);
+        if (response.data.data) {
+          localStorage.setItem("sutra", JSON.stringify(response.data.data));
+          router.replace(`/game/${id}`);
+        }
+
+        if (response.data.msg) {
+          toast.error(response.data.msg);
         }
       }
     } catch (error) {
-      if (error.request) {
-        const message = JSON.parse(error.request.response).error;
-        toast.error(message);
-      }
+      // if (error.request) {
+      //   const message = JSON.parse(error.request.response).error;
+      //   toast.error(message);
+      // }
 
       console.log(error);
     } finally {

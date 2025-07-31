@@ -8,6 +8,38 @@ import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { backendUrl } from "@/config/envFile";
 import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+
+const groupOptions = [
+  "Param",
+  "Pavitra",
+  "Pulkit",
+  "Paramanand",
+  "Samp",
+  "Atmiya",
+  "Suhradbhav",
+  "Bhulku",
+  "Saradta",
+  "Dasatva",
+  "Swikar",
+  "Ekta",
+  "Sahaj",
+  "Seva Nadiad",
+  "Smruti Nadiad",
+  "Suhradbhav Nadiad",
+  "Swadharma Nadiad",
+  "Bhakti Zone",
+  "Parabhakti Zone",
+  "Anuvrutti Zone",
+  "Mehemdavad",
+];
 
 const GamePage = ({ id }) => {
   const [partnerId, setPartnerId] = useState("");
@@ -16,26 +48,28 @@ const GamePage = ({ id }) => {
   const [part_a, setPart_a] = useState("");
   const [part_b, setPart_b] = useState("");
   const [blockNo, setBlockNo] = useState(null);
-  // game/get-quote-part
+  const [is_second_true, setIs_second_true] = useState(false);
+  const [group, setGroup] = useState("");
+  const [my_group, setMy_group] = useState("");
 
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(
-        `${backendUrl}/game/get-quote-part?diary_number=${id}`
-      );
-      console.log(res);
-      if (res.status === 200) {
-        console.log(res.data);
-        setPart_a(res.data.part_a);
-        setPart_b(res.data.part_b);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
-    fetchData();
-  }, [id]);
+    const data = JSON.parse(localStorage.getItem("sutra"));
+
+    if (!data || data.sutraData === null) {
+      redirect("/");
+    }
+
+    if (data.fieldValue !== id) {
+      redirect("/");
+    }
+
+    if (data.sutraData.p2 === id) {
+      setIs_second_true(true);
+    }
+    setPart_a(data.sutraData.s1);
+    setPart_b(data.sutraData.s2);
+    setMy_group(data.groupName);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,13 +78,16 @@ const GamePage = ({ id }) => {
       return;
     }
     setError("");
+
     try {
       setIsLoading(true);
       const res = await axios.post(
-        `${backendUrl}/game/verify-quote-pair`,
+        `${backendUrl}/sutra/checkStatus`,
         {
-          diary_id_1: id,
-          diary_id_2: partnerId,
+          id: id,
+          secondId: partnerId,
+          groupName: my_group,
+          secondGroupName: group,
         },
         {
           headers: {
@@ -61,49 +98,20 @@ const GamePage = ({ id }) => {
 
       console.log(res);
 
+      
+
       if (res.status === 200) {
-        toast.success(res.data.message);
-        setBlockNo(res.data.flip_number);
-      }
-    } catch (error) {
-      if (error.request) {
-        const message = JSON.parse(error.request.response).error;
-        toast.error(message);
-      }
-
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const flipBlock = async () => {
-    e.preventDefault();
-    if (partnerId.trim() === "") {
-      setError("Diary Id is required");
-      return;
-    }
-    setError("");
-    try {
-      setIsLoading(true);
-      const res = await axios.post(
-        `${backendUrl}/game/verify-quote-pair`,
-        {
-          diary_id_1: id,
-          diary_id_2: partnerId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+        if(res.data.errorStatus === true){
+          toast.error("Both IDs are in the same Sutra ")
         }
-      );
-
-      console.log(res);
-
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        setBlockNo(res.data.flip_number);
+        if (res.data.data.status === "PAIRED") {
+          toast.success("Successfully Paired");
+          setBlockNo(res.data.data.updated.sutraA.blockNo);
+        }
+        if (res.data.data.status == "ALREADY_PAIRED") {
+          setBlockNo(res.data.data.blockNo)
+          toast.success(res.data.data.msg);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -111,20 +119,21 @@ const GamePage = ({ id }) => {
       setIsLoading(false);
     }
   };
+
   return (
     <>
       <div className="flex flex-col gap-4 items-center">
         <div className="w-full flex  justify-center items-stretch gap-2">
           {/* This is for sutra section  */}
-          <Card className={'w-90 h-full'}>
+          <Card className={"w-90 h-full"}>
             <CardHeader>
-              {id % 2 == 0 ? "You need to find" : "Your Sutra"}
+              {is_second_true ? "You need to find" : "Your Sutra"}
             </CardHeader>
             <CardContent>
               <div className="flex gap-2">
                 <h1
                   className={`text-md font-bold ${
-                    id % 2 == 0 ? "text-destructive" : "text-primary"
+                    is_second_true ? "text-destructive" : "text-primary"
                   }`}
                 >
                   {part_a}
@@ -132,15 +141,15 @@ const GamePage = ({ id }) => {
               </div>
             </CardContent>
           </Card>
-          <Card className={'w-90'}>
+          <Card className={"w-90"}>
             <CardHeader>
-              {id % 2 == 0 ? "Your Sutra" : "You need to find"}
+              {is_second_true ? "Your Sutra" : "You need to find"}
             </CardHeader>
             <CardContent>
               <div className="flex gap-2">
                 <h1
                   className={`text-md font-bold ${
-                    id % 2 == 0 ? "text-primary" : "text-destructive"
+                    is_second_true ? "text-primary" : "text-destructive"
                   }`}
                 >
                   {part_b}
@@ -173,10 +182,29 @@ const GamePage = ({ id }) => {
                       <p className="text-red-500">{error}</p>
                     )}
                   </div>
-                  {/* disabled={blockNo!==null?true:false} */}
+                  <div className="flex flex-col gap-2 w-full">
+                    <Label>Select Group</Label>
+                    <Select
+                      onValueChange={(value) => {
+                        console.log("Selected Group:", value);
+                        setGroup(value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Group *" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {groupOptions.map((groupName) => (
+                          <SelectItem key={groupName} value={groupName}>
+                            {groupName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   <div className="w-full">
-                    <Button type={"submit"}  className={"w-full py-6 text-lg"}>
+                    <Button type={"submit"} className={"w-full py-6 text-lg"}>
                       {isLoading ? (
                         <Loader2 className="animate-spin" />
                       ) : (
@@ -195,9 +223,7 @@ const GamePage = ({ id }) => {
             <Card>
               <CardContent>
                 <div className="flex flex-col gap-2">
-                  
-                Your Block Number is : {blockNo}
-                <Button onClick={() => flipBlock(blockNo)}>Flip Block</Button>
+                  Your Fliped Block Number is : {blockNo}
                 </div>
               </CardContent>
             </Card>
