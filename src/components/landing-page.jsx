@@ -67,7 +67,7 @@ const LandingPage = () => {
         `${backendUrl}/game/diary-entry`,
         {
           diary_number: id,
-          group_name:group
+          group_name: group,
         },
         {
           headers: {
@@ -76,7 +76,13 @@ const LandingPage = () => {
         }
       );
 
-      if(response.status === 201) {
+      if (response.status === 201) {
+        if (response.data) {
+          router.replace(`/game/${response.data.diary_number}`);
+        }
+      }
+
+      if (response.status === 200) {
         if (response.data) {
           router.replace(`/game/${response.data.diary_number}`);
         }

@@ -1,15 +1,11 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import { FlipProvider } from "@/context/FlipCardContext";
+import { FlipCardProvider } from "@/context/FlipCardContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -23,12 +19,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         suppressHydrationWarning={true}
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.className} antialiased`}
       >
-        
-          <Toaster position="bottom-center" reverseOrder={false} />
-          <div className="px-3 py-2"><FlipProvider>{children} </FlipProvider></div>
-       
+        <Toaster position="bottom-center" reverseOrder={false} />
+        <div className="px-3 py-2">
+          <FlipCardProvider>{children} </FlipCardProvider>
+        </div>
       </body>
     </html>
   );

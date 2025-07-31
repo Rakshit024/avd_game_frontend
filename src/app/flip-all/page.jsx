@@ -4,12 +4,9 @@ import { useFlipContext } from "@/context/FlipCardContext";
 import React from "react";
 
 const page = () => {
-  const { setFlipAll } = useFlipContext();
-  return (
-    <div className="flex justify-center items-center">
-      <Button onClick={() => setFlipAll(true)}>Flip All</Button>
-    </div>
-  );
+  const { flipFromCenter } = useFlipContext();
+
+  return <Button onClick={flipFromCenter}>Flip From Anywhere</Button>;
 };
 
 export default page;

@@ -66,6 +66,11 @@ const GamePage = ({ id }) => {
         setBlockNo(res.data.flip_number);
       }
     } catch (error) {
+      if (error.request) {
+        const message = JSON.parse(error.request.response).error;
+        toast.error(message);
+      }
+
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -109,9 +114,12 @@ const GamePage = ({ id }) => {
   return (
     <>
       <div className="flex flex-col gap-4 items-center">
-        <div className="w-full flex items-center justify-center">
+        <div className="w-full flex  justify-center items-stretch gap-2">
           {/* This is for sutra section  */}
-          <Card>
+          <Card className={'w-90 h-full'}>
+            <CardHeader>
+              {id % 2 == 0 ? "You need to find" : "Your Sutra"}
+            </CardHeader>
             <CardContent>
               <div className="flex gap-2">
                 <h1
@@ -121,6 +129,15 @@ const GamePage = ({ id }) => {
                 >
                   {part_a}
                 </h1>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className={'w-90'}>
+            <CardHeader>
+              {id % 2 == 0 ? "Your Sutra" : "You need to find"}
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2">
                 <h1
                   className={`text-md font-bold ${
                     id % 2 == 0 ? "text-primary" : "text-destructive"
@@ -156,9 +173,10 @@ const GamePage = ({ id }) => {
                       <p className="text-red-500">{error}</p>
                     )}
                   </div>
+                  {/* disabled={blockNo!==null?true:false} */}
 
                   <div className="w-full">
-                    <Button type={"submit"} className={"w-full py-6 text-lg"}>
+                    <Button type={"submit"}  className={"w-full py-6 text-lg"}>
                       {isLoading ? (
                         <Loader2 className="animate-spin" />
                       ) : (
@@ -176,8 +194,11 @@ const GamePage = ({ id }) => {
           <div className="w-full flex items-center justify-center">
             <Card>
               <CardContent>
+                <div className="flex flex-col gap-2">
+                  
                 Your Block Number is : {blockNo}
                 <Button onClick={() => flipBlock(blockNo)}>Flip Block</Button>
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 
-const FlipCardCmp = ({ number ,flipped }) => {
+const FlipCardCmp = ({ number, flipped }) => {
   return (
     <div className="w-full h-full  perspective">
       <motion.div
@@ -11,7 +11,8 @@ const FlipCardCmp = ({ number ,flipped }) => {
         className="relative w-full h-full preserve-3d"
       >
         {/* Front side */}
-        <div className="absolute w-full h-full backface-hidden">
+
+        <div className="absolute w-full  h-full backface-hidden">
           <Card className="rounded-none bg-white w-full h-full flex items-center justify-center">
             <CardContent>
               <p className="text-xl text-center">{number}</p>
@@ -20,14 +21,13 @@ const FlipCardCmp = ({ number ,flipped }) => {
         </div>
 
         {/* Back side */}
-        {/* Back side */}
-        <div className="absolute w-full h-full rotate-y-180 backface-hidden">
+        <div className="absolute w-full h-full rotate-y-180  backface-hidden">
           <Card className="rounded-none py-0 border-none w-full h-full overflow-hidden">
-            <CardContent className="transform rotate-y-180 px-0">
+            <CardContent className=" px-0">
               <img
-                src="/img.jpeg"
+                src={`/cut_image/cut_images_rvGIifMY46VwQ/image_part_${number}.png`}
                 alt="Mandir"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </CardContent>
           </Card>
