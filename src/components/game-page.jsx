@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import {  Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { backendUrl } from "@/config/envFile";
 import toast from "react-hot-toast";
@@ -53,29 +53,34 @@ const GamePage = ({ id }) => {
   const [group, setGroup] = useState("");
   const [my_group, setMy_group] = useState("");
 
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("sutra"));
+  // useEffect(() => {
+  //   const data = JSON.parse(localStorage.getItem("sutra"));
 
-    if (!data || data.sutraData === null) {
-      redirect("/");
-    }
+  //   if (!data || data.sutraData === null) {
+  //     redirect("/");
+  //   }
 
-    if (data.fieldValue !== id) {
-      redirect("/");
-    }
+  //   if (data.fieldValue !== id) {
+  //     redirect("/");
+  //   }
 
-    if (data.sutraData.p2 === id) {
-      setIs_second_true(true);
-    }
-    setPart_a(data.sutraData.s1);
-    setPart_b(data.sutraData.s2);
-    setMy_group(data.groupName);
-  }, []);
+  //   if (data.sutraData.p2 === id) {
+  //     setIs_second_true(true);
+  //   }
+  //   setPart_a(data.sutraData.s1);
+  //   setPart_b(data.sutraData.s2);
+  //   setMy_group(data.groupName);
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (partnerId.trim() === "") {
       setError("Diary Id is required");
+      return;
+    }
+
+    if (!/^\d+$/.test(partnerId.trim())) {
+      setError("Diary ID must be a number");
       return;
     }
     setError("");
@@ -122,11 +127,11 @@ const GamePage = ({ id }) => {
   return (
     <>
       <div className="flex flex-col gap-4 items-center">
-        <div className="w-full flex  justify-center items-stretch gap-2">
-          {/* This is for sutra section  */}
-          <Card className={"w-90 h-full"}>
+        <div className="w-full flex justify-center items-stretch gap-4 ">
+          {/* This is for sutra section */}
+          <Card className="w-96 h-36 flex flex-col justify-between">
             <CardHeader>
-              {is_second_true ? "You need to find" : "Your Sutra"}
+              {is_second_true ? "તમારા સાથીદાર નું સુત્ર" : "તમારું સુત્ર"}
             </CardHeader>
             <CardContent>
               <div className="flex gap-2">
@@ -140,9 +145,10 @@ const GamePage = ({ id }) => {
               </div>
             </CardContent>
           </Card>
-          <Card className={"w-90"}>
+
+          <Card className="w-96 h-36 flex flex-col justify-between">
             <CardHeader>
-              {is_second_true ? "Your Sutra" : "You need to find"}
+              {is_second_true ? "તમારું સુત્ર" : "તમારા સાથીદાર નું સુત્ર"}
             </CardHeader>
             <CardContent>
               <div className="flex gap-2">
@@ -158,8 +164,18 @@ const GamePage = ({ id }) => {
           </Card>
         </div>
 
-        <div className="w-full flex items-center justify-center">
-          <Card>
+        <div className="w-full flex justify-center items-center">
+          <Card className={'w-full py-2'}>
+            <CardContent>
+               <div>
+                <h1 className="text-md text-center">તમારું Id : {id}</h1>
+               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="w-full h-full flex items-center justify-center">
+          <Card className={"h-full"}>
             <CardContent>
               <div>
                 <form
@@ -167,7 +183,7 @@ const GamePage = ({ id }) => {
                   className="flex flex-col items-center justify-center gap-4 w-[80vw]"
                 >
                   <div className="flex flex-col gap-2 w-full">
-                    <Label>Enter Your Partner Id</Label>
+                    <Label>તમારા સાથીદાર નું Id</Label>
                     <Input
                       type="text"
                       value={partnerId}
@@ -223,10 +239,10 @@ const GamePage = ({ id }) => {
               <CardContent>
                 <div className="flex flex-col gap-2">
                   Your Fliped Block Number is : {blockNo}
-                  <Link href={'/camera'}>
-                  <Button className={'w-full'} variant={'secondary'}>
-                    Take Smruti
-                  </Button>
+                  <Link href={"/camera"}>
+                    <Button className={"w-full"} variant={"secondary"}>
+                      Take Smruti
+                    </Button>
                   </Link>
                 </div>
               </CardContent>

@@ -15,6 +15,7 @@ import { redirect, useRouter } from "next/navigation";
 import axios from "axios";
 import { backendUrl } from "@/config/envFile";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 // Param
 // Pavitra
@@ -127,7 +128,21 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center gap-2 h-screen">
+
+      <div>
+        <Image
+        
+          src={'/HPYS-03.png'}
+
+          width={200}
+          height={200}
+          alt="Logo"
+        
+        />
+      </div>
+
+
       <div>
         <form
           onSubmit={handleSubmit}

@@ -66,7 +66,7 @@ export const FlipCardProvider = ({ children }) => {
 
       const records = res.data.data.records;
 
-      console.log(records);
+     
 
       if (!Array.isArray(records)) return;
 
@@ -99,7 +99,7 @@ export const FlipCardProvider = ({ children }) => {
         return;
       }
 
-      console.log("Received:", blockNo, flipped);
+      
 
       setCards((prev) =>
         prev.map((card) => (card.id === blockNo ? { ...card, flipped } : card))

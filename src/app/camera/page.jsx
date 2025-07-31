@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const Page = () => {
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null); // for triggering file input
   const [uploadedImage, setUploadedImage] = useState(null);
   const [finalImageUrl, setFinalImageUrl] = useState(null);
   const [sutra, setSutra] = useState(null);
@@ -18,7 +19,6 @@ const Page = () => {
   }, []);
 
   const completSutra = sutra ? `${sutra.s1} ${sutra.s2}` : "";
-  // const imageFileName = completSutra.replace(/\s+/g, "");
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -71,15 +71,28 @@ const Page = () => {
 
   return (
     <div className="flex flex-col items-center p-6">
-      {/* Upload input */}
+      {/* Hidden file input for camera */}
       <input
+        ref={fileInputRef}
         type="file"
         accept="image/*"
+        capture="user" // 👈 opens camera on mobile
         onChange={handleImageUpload}
-        className="mb-4"
+        className="hidden"
       />
+        <div className="mt-34 flex flex-col items-baseline justify-center gap-4">
+          <h2 className="text-lg">તમારા સાથીદાર સાથેની સેલ્ફી</h2>
+      {/* Custom trigger button */}
+      <Button
+        onClick={() => fileInputRef.current?.click()}
+        variant="default"
+        className="mb-4 py-5 px-8 w-full"
+        >
+        📸 Take Selfie
+      </Button>
+        </div>
 
-      {/* Canvas for compositing */}
+      {/* Canvas (hidden) */}
       <canvas ref={canvasRef} style={{ display: "none" }} />
 
       {/* Preview and Download */}
@@ -91,7 +104,7 @@ const Page = () => {
             className="w-[300px] border rounded shadow"
           />
           <a href={finalImageUrl} download="ID_Card.png">
-            <Button variant="secondary">Download Smruti</Button>
+            <Button variant="secondary">📥 Download Smruti</Button>
           </a>
         </div>
       )}
