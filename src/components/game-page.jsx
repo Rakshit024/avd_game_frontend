@@ -53,24 +53,24 @@ const GamePage = ({ id }) => {
   const [group, setGroup] = useState("");
   const [my_group, setMy_group] = useState("");
 
-  // useEffect(() => {
-  //   const data = JSON.parse(localStorage.getItem("sutra"));
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("sutra"));
 
-  //   if (!data || data.sutraData === null) {
-  //     redirect("/");
-  //   }
+    if (!data || data.sutraData === null) {
+      redirect("/");
+    }
 
-  //   if (data.fieldValue !== id) {
-  //     redirect("/");
-  //   }
+    if (data.fieldValue !== id) {
+      redirect("/");
+    }
 
-  //   if (data.sutraData.p2 === id) {
-  //     setIs_second_true(true);
-  //   }
-  //   setPart_a(data.sutraData.s1);
-  //   setPart_b(data.sutraData.s2);
-  //   setMy_group(data.groupName);
-  // }, []);
+    if (data.sutraData.p2 === id) {
+      setIs_second_true(true);
+    }
+    setPart_a(data.sutraData.s1);
+    setPart_b(data.sutraData.s2);
+    setMy_group(data.groupName);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
